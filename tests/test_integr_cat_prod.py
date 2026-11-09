@@ -41,3 +41,18 @@ def test_integration_create_cat_and_product():
     # Assertions finales
     assert producto_creado["nombre"] == "Tijeras"
     assert producto_creado["categoria_id"] == categoria_id
+
+
+def test_integration_create_category_returns_created_category():
+    response = client.post("/categorias", params={"nombre": "Libros"})
+
+    assert response.status_code == 200
+    assert response.json()["nombre"] == "Libros"
+
+
+def test_integration_product_with_unknown_category_returns_404():
+    response = client.post(
+        "/productos", params={"nombre": "Cuaderno", "categoria_id": 999}
+    )
+
+    assert response.status_code == 404

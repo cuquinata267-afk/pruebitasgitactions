@@ -38,3 +38,24 @@ def test_e2e_full_category_lifecycle():
     # E2E Assertions:
     assert len(final_list) == initial_count + 1
     assert any(c['nombre'] == cat_name for c in final_list)
+
+
+def test_e2e_get_categories_returns_list():
+    response = client.get("/categorias")
+
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+
+def test_e2e_create_product_for_new_category():
+    category_response = client.post(
+        "/categorias", params={"nombre": f"E2E Producto {int(time.time())}"}
+    )
+    categoria_id = category_response.json()["id"]
+
+    product_response = client.post(
+        "/productos", params={"nombre": "Cuaderno", "categoria_id": categoria_id}
+    )
+
+    assert product_response.status_code == 200
+    assert product_response.json()["categoria_id"] == categoria_id
