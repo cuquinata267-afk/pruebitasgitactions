@@ -1,4 +1,4 @@
-name: Pruebas automatizadas
+name: agregar pruebitasss
 
 on:
   push:
@@ -11,24 +11,24 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: Pruebas de la API
+  pruebas:
+    name: Pruebas
     runs-on: ubuntu-latest
     steps:
-      - name: Descargar el código
+      - name: Obtener código
         uses: actions/checkout@v4
 
-      - name: Configurar Python
+      - name: Preparar Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: requirements.txt
 
-      - name: Instalar dependencias
+      - name: Instalar
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
-      - name: Ejecutar pruebas
+      - name: Probar
         run: python -m pytest -q
