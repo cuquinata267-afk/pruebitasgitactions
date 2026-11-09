@@ -1,10 +1,10 @@
-from fastapi.testclient import TestClient
-from app import crud
-from app.main import app
 import pytest
 
+from app import crud
+from app.main import app
 
-cliente = TestClient(app)
+
+cliente = app.test_client()
 
 
 @pytest.fixture(autouse=True)
@@ -18,28 +18,28 @@ def preparar_datos():
 
 
 def test_crear_categoria_y_producto():
-    respuesta = cliente.post("/categorias", params={"nombre": "Música"})
-    categoria_id = respuesta.json()["id"]
-
+    respuesta = cliente.post("/categorias", query_string={"nombre": "Música"})
+    categoria_id = respuesta.json["id"]
     producto = cliente.post(
-        "/productos", params={"nombre": "Guitarra", "categoria_id": categoria_id}
+        "/productos",
+        query_string={"nombre": "Guitarra", "categoria_id": categoria_id},
     )
 
     assert respuesta.status_code == 200
     assert producto.status_code == 200
-    assert producto.json()["categoria_id"] == categoria_id
+    assert producto.json["categoria_id"] == categoria_id
 
 
 def test_respuesta_categoria():
-    respuesta = cliente.post("/categorias", params={"nombre": "Juegos"})
+    respuesta = cliente.post("/categorias", query_string={"nombre": "Juegos"})
 
     assert respuesta.status_code == 200
-    assert respuesta.json()["nombre"] == "Juegos"
+    assert respuesta.json["nombre"] == "Juegos"
 
 
 def test_producto_sin_categoria():
     respuesta = cliente.post(
-        "/productos", params={"nombre": "Cuaderno", "categoria_id": 999}
+        "/productos", query_string={"nombre": "Cuaderno", "categoria_id": 999}
     )
 
     assert respuesta.status_code == 404

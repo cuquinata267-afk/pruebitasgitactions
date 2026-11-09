@@ -1,15 +1,15 @@
 # pruebitasgitactions
 
-API de categorías y productos con FastAPI y persistencia JSON.
+API de categorías y productos con Flask y persistencia JSON.
 
 ## Ejecutar localmente
 
 ```bash
 python -m pip install -r requirements.txt
-python -m uvicorn app.main:app --reload --port 8005
+python -m flask --app app.main run --debug --port 8005
 ```
 
-Documentación interactiva: http://127.0.0.1:8005/docs
+La API queda disponible en http://127.0.0.1:8005.
 
 ## Pruebas
 

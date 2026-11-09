@@ -1,33 +1,34 @@
-from fastapi import FastAPI, HTTPException
-from . import crud 
+from flask import Flask, jsonify, request
 
-app = FastAPI()
+from . import crud
 
-# Rutas 
+
+app = Flask(__name__)
+
 
 @app.get("/categorias")
-def get_all_categorias_route():
-    return crud.get_categorias()
+def listar_categorias():
+    return jsonify(crud.get_categorias())
+
 
 @app.post("/categorias")
-def create_categoria_route(nombre: str):
-    """
-    Llama a la lógica de negocio (CRUD) para crear una categoría.
-    """
-    return crud.create_categoria_db(nombre)
-# agregar esto despues del primer commit
-""" @app.get("/productos")
-def get_all_productos_route():
-    return crud.get_productos() """
+def crear_categoria():
+    nombre = request.args.get("nombre")
+    if not nombre:
+        return jsonify({"error": "Falta el nombre de la categoría"}), 400
+
+    return jsonify(crud.create_categoria_db(nombre))
+
 
 @app.post("/productos")
-def create_producto_route(nombre: str, categoria_id: int):
-    """
-    Llama a la lógica de negocio (CRUD) para crear un producto.
-    """
+def crear_producto():
+    nombre = request.args.get("nombre")
+    categoria_id = request.args.get("categoria_id", type=int)
+    if not nombre or categoria_id is None:
+        return jsonify({"error": "Faltan datos del producto"}), 400
+
     producto = crud.create_producto_db(nombre, categoria_id)
-    
     if "error" in producto:
-        raise HTTPException(status_code=404, detail=producto["error"])
-        
-    return producto
+        return jsonify(producto), 404
+
+    return jsonify(producto)
